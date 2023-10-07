@@ -2,6 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MessageSquare } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -10,17 +13,45 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import axios from "axios";
 import { formSchema } from "./constants";
 
 const ConversationPage = () => {
+  // hooks
+  const router = useRouter();
+  // states
+  const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
   // set up form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { prompt: "" },
   });
+  // form loading state
   const formLoading = form.formState.isSubmitting;
+  // handle submit form
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      // create message obj
+      const currentMsg: ChatCompletionMessage = {
+        role: "user",
+        content: values.prompt,
+      };
+      // create new messages
+      const newMessages = [...messages, currentMsg];
+      // call conversation api
+      const response = await axios.post("/api/conversation", {
+        messages: newMessages,
+      });
+      // update messages state
+      setMessages((prevMsg) => [...prevMsg, currentMsg, response.data]);
+      // reset form for new promt
+      form.reset();
+    } catch (error) {
+      // TODO: open modal
+      console.log("[CONVERATION_SUBMIT_ERROR]", error);
+    } finally {
+      router.refresh();
+    }
   };
 
   return (
