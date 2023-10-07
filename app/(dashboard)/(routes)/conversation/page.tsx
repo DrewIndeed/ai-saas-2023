@@ -3,7 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
+import {
+  ChatCompletion,
+  ChatCompletionMessage,
+} from "openai/resources/chat/index.mjs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -13,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import Empty from "@/components/Empty";
+import Loader from "@/components/Loader";
 import axios from "axios";
 import { formSchema } from "./constants";
 
@@ -20,7 +25,7 @@ const ConversationPage = () => {
   // hooks
   const router = useRouter();
   // states
-  const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
+  const [messages, setMessages] = useState<ChatCompletion.Choice[]>([]);
   // set up form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,7 +64,7 @@ const ConversationPage = () => {
       <Heading
         {...{
           title: "Conversation",
-          desc: "Our most advanced conversation model!",
+          desc: "Our most advanced conversation model",
           icon: MessageSquare,
           iconColor: "text-violet-500",
           bgColor: "bg-violet-500/10",
@@ -93,7 +98,22 @@ const ConversationPage = () => {
             </form>
           </Form>
         </div>
-        <div className="space-y-4 mt-4">Messages</div>
+        <div className="space-y-4 mt-4">
+          {formLoading && (
+            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
+              <Loader />
+            </div>
+          )}
+          {messages.length === 0 && !formLoading && (
+            <Empty label="Maximus gotcha, don't by shy " />
+          )}
+          <div className="flex flex-col-reverse gap-y-4">
+            {messages.map((msg) => {
+              if (!msg.message) return null;
+              return <div key={msg.message.content}>{msg.message.content}</div>;
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
