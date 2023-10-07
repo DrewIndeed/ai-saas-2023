@@ -20,12 +20,16 @@ import Empty from "@/components/Empty";
 import Loader from "@/components/Loader";
 import axios from "axios";
 import { formSchema } from "./constants";
+import { cn } from "@/lib/utils";
+import CustomAvatar from "@/components/Avatar";
 
 const ConversationPage = () => {
   // hooks
   const router = useRouter();
   // states
-  const [messages, setMessages] = useState<ChatCompletion.Choice[]>([]);
+  const [messages, setMessages] = useState<
+    (ChatCompletionMessage & ChatCompletion.Choice)[]
+  >([]);
   // set up form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,7 +49,7 @@ const ConversationPage = () => {
       const newMessages = [...messages, currentMsg];
       // call conversation api
       const response = await axios.post("/api/conversation", {
-        messages: newMessages,
+        messages: [currentMsg],
       });
       // update messages state
       setMessages((prevMsg) => [...prevMsg, currentMsg, response.data]);
@@ -98,7 +102,7 @@ const ConversationPage = () => {
             </form>
           </Form>
         </div>
-        <div className="space-y-4 mt-4">
+        <div className="space-y-4 mt-4 pb-4">
           {formLoading && (
             <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
               <Loader />
@@ -107,11 +111,21 @@ const ConversationPage = () => {
           {messages.length === 0 && !formLoading && (
             <Empty label="Maximus gotcha, don't by shy " />
           )}
-          <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((msg) => {
-              if (!msg.message) return null;
-              return <div key={msg.message.content}>{msg.message.content}</div>;
-            })}
+          <div className="flex flex-col gap-y-4">
+            {messages.map((msg) => (
+              <div
+                key={msg.content || msg.message.content}
+                className={cn(
+                  "p-6 w-[90%] flex items-start gap-x-8 rounded-lg break-word text-justify",
+                  msg.role === "user"
+                    ? "bg-white border border-black/10 mr-auto"
+                    : "bg-muted ml-auto flex-row-reverse justify-between"
+                )}
+              >
+                <CustomAvatar type={msg.role === "user" ? "user" : "bot"} />
+                {!msg.message ? msg.content : msg.message.content}
+              </div>
+            ))}
           </div>
         </div>
       </div>
