@@ -9,7 +9,7 @@ interface CustomAvatarProps {
 const CustomAvatar = ({ type }: CustomAvatarProps) => {
   const { user } = useUser();
   return (
-    <Avatar className={cn("h-10 w-10", type === "bot" && "p-1")}>
+    <Avatar className={cn("h-10 w-10 select-none", type === "bot" && "p-1")}>
       {type === "user" && (
         <>
           <AvatarImage src={user?.imageUrl} />

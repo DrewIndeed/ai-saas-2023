@@ -15,7 +15,9 @@ const Empty = ({ label }: EmptyProps) => {
           fill
         />
       </div>
-      <p className="text-muted-foreground text-sm text-center">{label}</p>
+      <p className="text-muted-foreground text-sm text-center font-semibold">
+        {label}
+      </p>
     </div>
   );
 };

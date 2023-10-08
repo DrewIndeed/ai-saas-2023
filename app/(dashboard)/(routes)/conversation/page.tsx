@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -11,17 +12,17 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import CustomAvatar from "@/components/Avatar";
+import Empty from "@/components/Empty";
 import Heading from "@/components/Heading";
+import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-import Empty from "@/components/Empty";
-import Loader from "@/components/Loader";
-import axios from "axios";
-import { formSchema } from "./constants";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import CustomAvatar from "@/components/Avatar";
+
+import { formSchema } from "./constants";
 
 const ConversationPage = () => {
   // hooks
@@ -68,14 +69,14 @@ const ConversationPage = () => {
       <Heading
         {...{
           title: "Conversation",
-          desc: "Our most advanced conversation model",
+          desc: "Our most advanced chat model",
           icon: MessageSquare,
           iconColor: "text-violet-500",
           bgColor: "bg-violet-500/10",
         }}
       />
       <div className="px-4 lg:px-8">
-        <div>
+        <div className="mb-4">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -84,7 +85,7 @@ const ConversationPage = () => {
               <FormField
                 name="prompt"
                 render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-10">
+                  <FormItem className="col-span-12 lg:col-span-8">
                     <FormControl className="m-0 p-0">
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
@@ -96,8 +97,19 @@ const ConversationPage = () => {
                   </FormItem>
                 )}
               />
-              <Button className="col-span-12 lg:col-span-2 w-full">
+              <Button className="col-span-6 lg:col-span-2 w-full">
                 Generate
+              </Button>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMessages([]);
+                }}
+                variant="destructive"
+                className="col-span-6 lg:col-span-2 w-full"
+                disabled={messages.length <= 0}
+              >
+                Clear All
               </Button>
             </form>
           </Form>
@@ -109,21 +121,24 @@ const ConversationPage = () => {
             </div>
           )}
           {messages.length === 0 && !formLoading && (
-            <Empty label="Maximus gotcha, don't by shy " />
+            <Empty label="Ask me anything ✨" />
           )}
-          <div className="flex flex-col gap-y-4">
+          {messages.length > 0 && <Separator />}
+          <div className="flex flex-col-reverse gap-y-4">
             {messages.map((msg) => (
               <div
                 key={msg.content || msg.message.content}
                 className={cn(
-                  "p-6 w-[90%] flex items-start gap-x-8 rounded-lg break-word text-justify",
+                  "p-5 w-[90%] flex gap-x-6 rounded-lg break-word text-justify",
                   msg.role === "user"
-                    ? "bg-white border border-black/10 mr-auto"
-                    : "bg-muted ml-auto flex-row-reverse justify-between"
+                    ? "bg-white border border-black/10 ml-auto flex-row-reverse justify-between font-semibold"
+                    : "bg-muted mr-auto"
                 )}
               >
                 <CustomAvatar type={msg.role === "user" ? "user" : "bot"} />
-                {!msg.message ? msg.content : msg.message.content}
+                <div className="flex flex-col justify-center">
+                  {!msg.message ? msg.content : msg.message.content}
+                </div>
               </div>
             ))}
           </div>

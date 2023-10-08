@@ -13,8 +13,8 @@ const Loader = (props: LoaderProps) => {
           sizes="(max-width: 400px) 100vw, 400px"
         />
       </div>
-      <p className="text-sm text-muted-background">
-        Maximus is thinking hard ...
+      <p className="text-sm text-muted-background font-semibold">
+        Maximus is thinking ...
       </p>
     </div>
   );
