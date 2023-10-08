@@ -46,7 +46,7 @@ const tools = [
     href: "/code-gen",
     color: "text-yellow-500",
     bgColor: "bg-yellow-500/10",
-    icon: VideoIcon,
+    icon: Code,
   },
 ];
 
