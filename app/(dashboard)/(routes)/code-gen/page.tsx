@@ -59,7 +59,7 @@ const CodeGenPage = () => {
       form.reset();
     } catch (error) {
       // TODO: open modal
-      console.log("[CONVERATION_SUBMIT_ERROR]", error);
+      console.log("[CODEGEN_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();
     }
