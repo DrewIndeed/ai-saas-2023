@@ -129,7 +129,7 @@ const ConversationPage = () => {
               <div
                 key={msg.content || msg.message.content}
                 className={cn(
-                  "p-5 w-[90%] flex gap-x-6 rounded-lg break-word text-justify",
+                  "p-5 max-w-[90%] flex gap-x-6 rounded-lg break-word text-justify",
                   msg.role === "user"
                     ? "bg-white border border-black/10 ml-auto flex-row-reverse justify-between font-semibold"
                     : "bg-muted mr-auto"
