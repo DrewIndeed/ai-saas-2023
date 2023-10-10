@@ -2,9 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { Music } from "lucide-react";
+import { Video } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -19,11 +18,11 @@ import { Separator } from "@/components/ui/separator";
 
 import { formSchema } from "./constants";
 
-const MusicGenPage = () => {
+const VideoGenPage = () => {
   // hooks
   const router = useRouter();
   // states
-  const [music, setMusic] = useState<string | undefined>(undefined);
+  const [video, setVideo] = useState<string | undefined>(undefined);
   // set up form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,16 +34,16 @@ const MusicGenPage = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       console.log({ values });
-      setMusic(undefined);
+      setVideo(undefined);
       // call conversation api
-      const response = await axios.post("/api/music-gen", values);
+      const response = await axios.post("/api/video-gen", values);
       // update messages state
-      setMusic(response.data.audio);
+      setVideo(response.data[0]);
       // reset form for new promt
       form.reset();
     } catch (error) {
       // TODO: open modal
-      console.log("[MUSIC_SUBMIT_ERROR]", error);
+      console.log("[VIDEO_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();
     }
@@ -54,11 +53,11 @@ const MusicGenPage = () => {
     <div>
       <Heading
         {...{
-          title: "Music Generation",
-          desc: "Turn your prompt into your favorite sound",
-          icon: Music,
-          iconColor: "text-emerald-700",
-          bgColor: "bg-emerald-700/10",
+          title: "Video Generation",
+          desc: "Turn your prompt into your favorite video",
+          icon: Video,
+          iconColor: "text-orange-600",
+          bgColor: "bg-orange-600/10",
         }}
       />
       <div className="px-4 lg:px-8">
@@ -76,7 +75,7 @@ const MusicGenPage = () => {
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={formLoading}
-                        placeholder="Guitar version of the Hungarian Rhapsody"
+                        placeholder="A huge whale swimming from top view"
                         {...field}
                       />
                     </FormControl>
@@ -89,11 +88,11 @@ const MusicGenPage = () => {
               <Button
                 onClick={(e) => {
                   e.preventDefault();
-                  setMusic(undefined);
+                  setVideo(undefined);
                 }}
                 variant="destructive"
                 className="col-span-6 lg:col-span-2 w-full"
-                disabled={!music}
+                disabled={!video}
               >
                 Clear
               </Button>
@@ -106,12 +105,14 @@ const MusicGenPage = () => {
               <Loader />
             </div>
           )}
-          {!music && !formLoading && <Empty label="Make me sing ✨" />}
-          {music && <Separator />}
-          {music && (
-            <audio controls className="w-full mt-8">
-              <source src={music} />
-            </audio>
+          {!video && !formLoading && (
+            <Empty label="Let me show you the world ✨" />
+          )}
+          {video && <Separator />}
+          {video && (
+            <video className="w-full aspect-video mt-8 rounded-lg border border-black" controls>
+              <source src={video} />
+            </video>
           )}
         </div>
       </div>
@@ -119,4 +120,4 @@ const MusicGenPage = () => {
   );
 };
 
-export default MusicGenPage;
+export default VideoGenPage;

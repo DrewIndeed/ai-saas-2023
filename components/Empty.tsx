@@ -12,6 +12,7 @@ const Empty = ({ label }: EmptyProps) => {
           alt="empty"
           src="/empty.png"
           sizes="(max-width: 1400px) 100vw, 1400px"
+          priority
           fill
         />
       </div>
