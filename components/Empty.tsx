@@ -6,7 +6,7 @@ interface EmptyProps {
 
 const Empty = ({ label }: EmptyProps) => {
   return (
-    <div className="h-full p-20 flex flex-col items-center justify-center">
+    <div className="h-full p-20 flex flex-col items-center justify-center select-none pointer-events-none">
       <div className="w-72 h-72 relative">
         <Image
           alt="empty"

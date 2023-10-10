@@ -2,8 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { ImageIcon } from "lucide-react";
+import { Download, ImageIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -11,10 +13,9 @@ import Empty from "@/components/Empty";
 import Heading from "@/components/Heading";
 import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
+import { Card, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-
 import {
   Select,
   SelectContent,
@@ -22,7 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { Separator } from "@/components/ui/separator";
+
 import { amountOptions, formSchema, resolutionOptions } from "./constants";
 
 const ImageGenPage = () => {
@@ -95,7 +97,7 @@ const ImageGenPage = () => {
                 control={form.control}
                 name="amount"
                 render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-3">
+                  <FormItem className="col-span-6 lg:col-span-3">
                     <Select
                       disabled={formLoading}
                       onValueChange={field.onChange}
@@ -122,7 +124,7 @@ const ImageGenPage = () => {
                 control={form.control}
                 name="resolution"
                 render={({ field }) => (
-                  <FormItem className="col-span-12 lg:col-span-3">
+                  <FormItem className="col-span-6 lg:col-span-3">
                     <Select
                       disabled={formLoading}
                       onValueChange={field.onChange}
@@ -172,7 +174,37 @@ const ImageGenPage = () => {
             <Empty label="Let's make some images  ✨" />
           )}
           {images.length > 0 && <Separator />}
-          {images.length > 0 && <div>Images will be here</div>}
+          {images.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
+              {images.map((src) => (
+                <Card key={src} className="rounded-lg overflow-hidden">
+                  <div className="relative aspect-square">
+                    <Image
+                      src={src}
+                      alt="image gen"
+                      className="select-none pointer-events-none"
+                      sizes={`(max-width: ${
+                        form.getValues("resolution").split("x")[0]
+                      }px) 100vw, ${
+                        form.getValues("resolution").split("x")[0]
+                      }px`}
+                      fill
+                    />
+                  </div>
+                  <CardFooter className="p-2">
+                    <Button
+                      onClick={() => window.open(src)}
+                      variant="secondary"
+                      className="w-full"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -10,7 +10,8 @@ const Navbar = () => {
           afterSignOutUrl="/"
           appearance={{
             elements: {
-              userButtonAvatarBox: "w-11 h-11",
+              userButtonAvatarBox: "w-11 h-11 select-none pointer-events-none",
+              userPreviewAvatarBox: "select-none pointer-events-none",
             },
           }}
         />
