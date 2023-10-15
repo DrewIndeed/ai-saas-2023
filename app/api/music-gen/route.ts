@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
+import { checkValidApiLimit, increaseApiLimit } from "@/lib/api-limits";
 
 const replicateConfig = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -17,6 +18,10 @@ export async function POST(req: Request) {
     if (!userId) return new NextResponse("Unauthorized", { status: 401 });
     if (!prompt)
       return new NextResponse("Messages are required", { status: 400 });
+    // check is free trial is over
+    const freeTrial = await checkValidApiLimit();
+    if (!freeTrial)
+      return new NextResponse("Free trial has expired", { status: 403 });
 
     // use music gen api from Replicate
     const musicOutput = await replicateConfig.run(
@@ -27,6 +32,10 @@ export async function POST(req: Request) {
         },
       }
     );
+
+    // if there is still free trial -> increase trial count
+    await increaseApiLimit();
+
     // return chat response
     return NextResponse.json(musicOutput);
   } catch (error) {
