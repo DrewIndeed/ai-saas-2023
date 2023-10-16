@@ -26,9 +26,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { amountOptions, formSchema, resolutionOptions } from "./constants";
+import { useProModal } from "@/hooks/useProModal";
 
 const ImageGenPage = () => {
   // hooks
+  const proModal = useProModal();
   const router = useRouter();
   // states
   const [images, setImages] = useState<string[]>([]);
@@ -52,8 +54,8 @@ const ImageGenPage = () => {
       setImages(urls);
       // reset form for new promt
       form.reset();
-    } catch (error) {
-      // TODO: open modal
+    } catch (error: any) {
+      if (error?.response?.status === 403) proModal.onOpen();
       console.log("[IMAGEGEN_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();

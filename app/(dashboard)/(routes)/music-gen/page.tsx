@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Music } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ChatCompletionMessage } from "openai/resources/chat/index.mjs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -17,10 +16,12 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
+import { useProModal } from "@/hooks/useProModal";
 import { formSchema } from "./constants";
 
 const MusicGenPage = () => {
   // hooks
+  const proModal = useProModal();
   const router = useRouter();
   // states
   const [music, setMusic] = useState<string | undefined>(undefined);
@@ -42,8 +43,8 @@ const MusicGenPage = () => {
       setMusic(response.data.audio);
       // reset form for new promt
       form.reset();
-    } catch (error) {
-      // TODO: open modal
+    } catch (error: any) {
+      if (error?.response?.status === 403) proModal.onOpen();
       console.log("[MUSIC_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();

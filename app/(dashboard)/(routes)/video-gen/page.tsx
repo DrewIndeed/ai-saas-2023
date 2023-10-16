@@ -16,10 +16,12 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
+import { useProModal } from "@/hooks/useProModal";
 import { formSchema } from "./constants";
 
 const VideoGenPage = () => {
   // hooks
+  const proModal = useProModal();
   const router = useRouter();
   // states
   const [video, setVideo] = useState<string | undefined>(undefined);
@@ -41,8 +43,8 @@ const VideoGenPage = () => {
       setVideo(response.data[0]);
       // reset form for new promt
       form.reset();
-    } catch (error) {
-      // TODO: open modal
+    } catch (error: any) {
+      if (error?.response?.status === 403) proModal.onOpen();
       console.log("[VIDEO_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();
@@ -110,7 +112,10 @@ const VideoGenPage = () => {
           )}
           {video && <Separator />}
           {video && (
-            <video className="w-full aspect-video mt-8 rounded-lg border border-black" controls>
+            <video
+              className="w-full aspect-video mt-8 rounded-lg border border-black"
+              controls
+            >
               <source src={video} />
             </video>
           )}

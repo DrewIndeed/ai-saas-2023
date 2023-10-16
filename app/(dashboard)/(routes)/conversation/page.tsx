@@ -22,10 +22,12 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
+import { useProModal } from "@/hooks/useProModal";
 import { formSchema } from "./constants";
 
 const ConversationPage = () => {
   // hooks
+  const proModal = useProModal();
   const router = useRouter();
   // states
   const [messages, setMessages] = useState<
@@ -56,8 +58,8 @@ const ConversationPage = () => {
       setMessages((prevMsg) => [...prevMsg, currentMsg, response.data]);
       // reset form for new promt
       form.reset();
-    } catch (error) {
-      // TODO: open modal
+    } catch (error: any) {
+      if (error?.response?.status === 403) proModal.onOpen();
       console.log("[CONVERATION_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();

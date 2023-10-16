@@ -1,3 +1,4 @@
+import ModalProvider from "@/components/ModalProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -21,7 +22,9 @@ export default function RootLayout({
         <head>
           <link rel="icon" href="/logo.png" />
         </head>
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <ModalProvider /> {children}
+        </body>
       </html>
     </ClerkProvider>
   );

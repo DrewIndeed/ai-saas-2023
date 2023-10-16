@@ -24,9 +24,11 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 import { formSchema } from "./constants";
+import { useProModal } from "@/hooks/useProModal";
 
 const CodeGenPage = () => {
   // hooks
+  const proModal = useProModal();
   const router = useRouter();
   // states
   const [messages, setMessages] = useState<
@@ -57,8 +59,8 @@ const CodeGenPage = () => {
       setMessages((prevMsg) => [...prevMsg, currentMsg, response.data]);
       // reset form for new promt
       form.reset();
-    } catch (error) {
-      // TODO: open modal
+    } catch (error: any) {
+      if (error?.response?.status === 403) proModal.onOpen();
       console.log("[CODEGEN_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();
