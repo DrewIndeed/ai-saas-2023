@@ -13,15 +13,12 @@ import {
 
 import { useProModal } from "@/hooks/useProModal";
 import { cn } from "@/lib/utils";
+import axios from "axios";
+import { useState } from "react";
 import { Badge } from "./ui/badge";
-import { Card } from "./ui/card";
-import {
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-} from "./ui/dialog";
 import { Button } from "./ui/button";
+import { Card } from "./ui/card";
+import { DialogContent, DialogFooter, DialogHeader } from "./ui/dialog";
 
 const tools = [
   {
@@ -58,6 +55,20 @@ const tools = [
 
 const ProModal = () => {
   const proModal = useProModal();
+
+  // handle upgrade clicked
+  const [isLoading, setLoading] = useState(false);
+  const onSubscribe = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/stripe");
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.log("[STRIPE_CLIENT_ERROR][Upgrade Subscription Clicked]", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
       <DialogContent>
@@ -80,15 +91,20 @@ const ProModal = () => {
                   <div className={cn("p-2 w-fit rounded-md", tool.bgColor)}>
                     <tool.icon className={cn("w-6 h-6", tool.color)} />
                   </div>
-                  <div className="font-semibold">{tool.label}</div>
+                  <div className="font-medium">{tool.label}</div>
                 </div>
-                <Check className="w-5 h-5 text-primary" />
+                <Check className="w-6 h-6 text-green-600" />
               </Card>
             ))}
           </div>
         </DialogHeader>
         <DialogFooter>
-          <Button size="lg" variant="upgrade" className="w-full">
+          <Button
+            onClick={onSubscribe}
+            size="lg"
+            variant="upgrade"
+            className="w-full"
+          >
             Upgrade Now
             <Zap className="w-4 h-4 ml-2 fill-white" />
           </Button>
