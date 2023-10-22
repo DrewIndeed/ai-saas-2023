@@ -1,7 +1,8 @@
+import { checkValidApiLimit, increaseApiLimit } from "@/lib/api-limits";
+import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { checkValidApiLimit, increaseApiLimit } from "@/lib/api-limits";
 
 const openaiConfig = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -21,9 +22,12 @@ export async function POST(req: Request) {
     if (!prompt) return new NextResponse("Prompt is required", { status: 400 });
     if (!amount) return new NextResponse("Amount is required", { status: 400 });
     if (!size) return new NextResponse("Size is required", { status: 400 });
+
     // check is free trial is over
     const freeTrial = await checkValidApiLimit();
-    if (!freeTrial)
+    // check if is pro, only increase when not pro
+    const isPro = await checkSubscription();
+    if (!freeTrial && !isPro)
       return new NextResponse("Free trial has expired", { status: 403 });
 
     // use image api
@@ -34,7 +38,7 @@ export async function POST(req: Request) {
     });
 
     // if there is still free trial -> increase trial count
-    await increaseApiLimit();
+    if (!isPro) await increaseApiLimit();
 
     // return image response (array)
     return NextResponse.json(imageGenResponse.data);

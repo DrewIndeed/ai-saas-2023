@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { checkValidApiLimit, increaseApiLimit } from "@/lib/api-limits";
+import { checkSubscription } from "@/lib/subscription";
 
 const openaiConfig = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -23,7 +24,9 @@ export async function POST(req: Request) {
 
     // check is free trial is over
     const freeTrial = await checkValidApiLimit();
-    if (!freeTrial)
+    // check if is pro, only increase when not pro
+    const isPro = await checkSubscription();
+    if (!freeTrial && !isPro)
       return new NextResponse("Free trial has expired", { status: 403 });
 
     // use conversation api
@@ -33,7 +36,7 @@ export async function POST(req: Request) {
     });
 
     // if there is still free trial -> increase trial count
-    await increaseApiLimit();
+    if (!isPro) await increaseApiLimit();
 
     // return chat response
     return NextResponse.json(chatCompletion.choices[0]);

@@ -1,7 +1,8 @@
+import { checkValidApiLimit, increaseApiLimit } from "@/lib/api-limits";
+import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
-import { checkValidApiLimit, increaseApiLimit } from "@/lib/api-limits";
 
 const replicateConfig = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -18,9 +19,12 @@ export async function POST(req: Request) {
     if (!userId) return new NextResponse("Unauthorized", { status: 401 });
     if (!prompt)
       return new NextResponse("Messages are required", { status: 400 });
+
     // check is free trial is over
     const freeTrial = await checkValidApiLimit();
-    if (!freeTrial)
+    // check if is pro, only increase when not pro
+    const isPro = await checkSubscription();
+    if (!freeTrial && !isPro)
       return new NextResponse("Free trial has expired", { status: 403 });
 
     // use video gen api from Replicate
@@ -34,7 +38,7 @@ export async function POST(req: Request) {
     );
 
     // if there is still free trial -> increase trial count
-    await increaseApiLimit();
+    if (!isPro) await increaseApiLimit();
 
     // return chat response
     return NextResponse.json(videoOutput);

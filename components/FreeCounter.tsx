@@ -12,15 +12,17 @@ import { useProModal } from "@/hooks/useProModal";
 
 interface FreeCounterProps {
   limitCount: number;
+  isPro: boolean;
 }
 
-const FreeCounter = ({ limitCount = 0 }: FreeCounterProps) => {
+const FreeCounter = ({ limitCount = 0, isPro }: FreeCounterProps) => {
   const proModal = useProModal();
   const [isMounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
   if (!isMounted) return null;
+  if (isPro) return null;
 
   return (
     <div className="px-3">
