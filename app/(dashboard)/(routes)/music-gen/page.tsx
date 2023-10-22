@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
 import { useProModal } from "@/hooks/useProModal";
+import toast from "react-hot-toast";
 import { formSchema } from "./constants";
 
 const MusicGenPage = () => {
@@ -45,6 +46,7 @@ const MusicGenPage = () => {
       form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) proModal.onOpen();
+      else toast.error("Something when wrong.");
       console.log("[MUSIC_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();

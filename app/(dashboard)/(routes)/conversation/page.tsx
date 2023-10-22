@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 
 import { useProModal } from "@/hooks/useProModal";
 import { formSchema } from "./constants";
+import toast from "react-hot-toast";
 
 const ConversationPage = () => {
   // hooks
@@ -60,6 +61,7 @@ const ConversationPage = () => {
       form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) proModal.onOpen();
+      else toast.error("Something when wrong.");
       console.log("[CONVERATION_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();

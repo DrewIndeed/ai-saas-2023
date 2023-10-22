@@ -23,8 +23,9 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
-import { formSchema } from "./constants";
 import { useProModal } from "@/hooks/useProModal";
+import toast from "react-hot-toast";
+import { formSchema } from "./constants";
 
 const CodeGenPage = () => {
   // hooks
@@ -61,6 +62,7 @@ const CodeGenPage = () => {
       form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) proModal.onOpen();
+      else toast.error("Something when wrong.");
       console.log("[CODEGEN_SUBMIT_ERROR]", error);
     } finally {
       router.refresh();
