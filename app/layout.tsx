@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import CrispProvider from "@/components/CrispProvider";
 import ModalProvider from "@/components/ModalProvider";
 import ToasterProvider from "@/components/ToasterProvider";
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         <head>
           <link rel="icon" href="/logo.png" />
         </head>
+        <CrispProvider />
         <body className={inter.className}>
           <ToasterProvider />
           <ModalProvider /> {children}

@@ -5,7 +5,7 @@ import MobileSidebar from "./mobile/Sidebar";
 const Navbar = async () => {
   const limitCount = await getApiLimitCount();
   return (
-    <div className="flex items-center p-4 md:w-full md:fixed bottom-0 right-0">
+    <div className="flex items-center p-4 md:w-full md:fixed top-2 right-2">
       <MobileSidebar limitCount={limitCount} />
       <div className="flex w-full justify-end">
         <UserButton
