@@ -51,19 +51,44 @@ const content = [
     title: "Software Architect",
     description: "Designs scalable and robust software architectures!",
   },
+  {
+    name: "Avery Clark",
+    avatar: "A",
+    title: "UX Researcher",
+    description: "Uncovers valuable user insights to inform design decisions!",
+  },
+  {
+    name: "Sofia Rodriguez",
+    avatar: "S",
+    title: "Mobile App Developer",
+    description: "Builds innovative and user-friendly mobile applications!",
+  },
+  {
+    name: "Mia Johnson",
+    avatar: "M",
+    title: "Digital Marketer",
+    description: "Expert in driving online visibility and engagement!",
+  },
+  {
+    name: "Alexander Harris",
+    avatar: "A",
+    title: "Full Stack Developer",
+    description: "Equally proficient in front-end and back-end development!",
+  },
 ];
 
 const LandingTestinomials = () => {
   return (
-    <div className="px-10 pb-20">
-      <h2 className="text-center text-3xl text-primary font-extrabold mb-10">
-        Let&lsquo;s The People Speak For Us
+    <div className="px-6 md:px-10 pb-24">
+      <h2 className="text-center text-xl md:text-3xl text-primary font-extrabold mb-5 md:mb-10">
+        Let&lsquo;s The People Speak For Us ✨
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {content.map((item) => (
           <Card
             key={item.description}
-            className="text-primary hover:shadow-md transition-shadow duration-300"
+            className="backdrop-blur-md text-primary hover:shadow-md hover:-translate-y-2 
+            transition-all duration-300 bg-white/80 hover:bg-white/95"
           >
             <CardHeader>
               <CardTitle className="flex items-center gap-x-2">
